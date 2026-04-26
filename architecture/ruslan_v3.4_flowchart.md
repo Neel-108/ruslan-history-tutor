@@ -1,7 +1,7 @@
 RUSLAN v3.4 FLOWCHART
 
 Note: Best viewed in Raw or Code view on GtHub.
-
+```
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         USER SENDS MESSAGE                          │
@@ -135,3 +135,4 @@ Note: Best viewed in Raw or Code view on GtHub.
 │  Grade-appropriate                                                  │
 │  Continuation-safe                                                  │
 └─────────────────────────────────────────────────────────────────────┘
+```
