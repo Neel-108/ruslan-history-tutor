@@ -14,27 +14,16 @@ from config_ruslan import (
     ADMIN_TELEGRAM_ID,
     ALLOWED_USERS,
     BETA_MESSAGE,
-   # CASUAL_RESPONSE,
-    #GREETING_RESPONSE,
-   # ABUSE_RESPONSE,
     GIBBERISHRESPONSE,
     ABUSE_WORDS,
     ABUSE_PENALTY_TOKENS,
     DISCLAIMER,
     INITIAL_TOKEN_GRANT,
-    CASUAL_RESPONSES,  # NEW
-    ABUSE_RESPONSES,  # NEW
+    CASUAL_RESPONSES,  
+    ABUSE_RESPONSES,  
     MAX_TOKENS_BY_GRADE,
     LITE_TOKEN_RATIO
 )
-
-# import database_v3_4 as database
-# from classifier_v3_4 import classify_intent
-# from prompt_builder_v3_4 import build_prompt, extract_checkpoint_simple, MODE
-# from ruslan_logic_v3_4 import RuslanLogic
-# from session_mgr_v3_4 import SessionManager
-# from yandex_api_pro import call_yandex_gpt_pro
-# from topic_resolver import get_topic_resolver
 
 import ruslan_database_v3_4 as database
 from ruslan_classifier_v3_4 import classify_intent
@@ -55,12 +44,6 @@ topic_resolver = get_topic_resolver()
 # ============================================================================
 # ACCESS CONTROL HELPERS
 # ============================================================================
-
-# def is_whitelisted(telegram_id: int) -> bool:
-    # """Check if user is whitelisted"""
-    # if not ALLOWED_USERS:
-        # return True
-    # return telegram_id in ALLOWED_USERS
     
 async def is_whitelisted(telegram_id: int) -> bool:
     """Check if user is whitelisted"""
@@ -271,37 +254,6 @@ async def cmd_stats(message: Message):
         f"└─ Сообщений: {user['messagecount']}"
     )
 
-
-# ============================================================================
-# /report COMMAND
-# ============================================================================
-
-# @router.message(Command("report"))
-# async def cmd_report(message: Message):
-    # """Generate 7-day usage report"""
-    # user_id = message.from_user.id
-    
-    # if not await is_whitelisted(user_id):
-        # await message.answer(BETA_MESSAGE)
-        # return
-    
-    # report = await database.get_usage_report(user_id, days=7)
-    
-    # if not report['daily_breakdown']:
-        # await message.answer("📊 Нет данных за последние 7 дней.")
-        # return
-
-    # report_text = f"📊 **Отчёт за {report['days']} дней:**\n\n"
-    # report_text += f"Всего токенов: {report['total_tokens']:,}\n"
-    # report_text += f"Всего сообщений: {report['total_messages']}\n\n"
-
-    # for day in report['daily_breakdown'][:7]:
-        # report_text += f"**{day['date']}**\n"
-        # report_text += f"├─ Токенов: {day['tokens']:,}\n"
-        # report_text += f"└─ Сообщений: {day['messages']}\n\n"
-
-    # await message.answer(report_text)
-
 @router.message(Command("report"))
 async def cmd_report(message: Message):
     """
@@ -316,7 +268,6 @@ async def cmd_report(message: Message):
         return
     
     # Get 7-day report from audit log
-#    report = await get_usage_report(user_id, days=7)
     report = await database.get_usage_report(user_id, days=7)
     
     if report['total_messages'] == 0:
@@ -329,9 +280,6 @@ async def cmd_report(message: Message):
     report_text += f"├─ Сообщений: {report['total_messages']}\n"
     report_text += f"├─ Обучающих: {report['total_teaching']}\n"
     report_text += f"├─ Casual чатов: {report['total_casual']}\n"
-    
-   # if report['total_abuse_penalties'] > 0:
-        #report_text += f"├─ ⚠️ Штрафов за нарушения: {report['total_abuse_penalties']}\n" #fines should not be visible to users
     
     report_text += f"└─ Токенов: {report['total_tokens']:,}\n\n"
     
@@ -348,13 +296,10 @@ async def cmd_report(message: Message):
             report_text += f"\n{date}:\n"
             report_text += f"  ├─ Обучающих: {teaching}\n"
             report_text += f"  ├─ Casual: {casual}\n"
-           # if abuse > 0:
-                #report_text += f"  ├─ ⚠️ Штрафов: {abuse}\n" #fines should not be visible to users
             report_text += f"  └─ Токенов: {tokens:,}\n"
     
     # Calculate cost
     cost_total = (report['total_tokens'] / 1000) * 0.40
-   # report_text += f"\nСтоимость: {cost_total:.2f} ₽" #commented so that user should not see costs
     
     await message.answer(report_text)
 
@@ -581,14 +526,6 @@ async def handle_message(message: Message):
     
     # After balance check, line ~271
     cleaned = user_message.strip()
-
-    # Gibberish detection - bypass classifier entirely
-    # is_gibberish = (
-        # len(cleaned) < 3 or 
-        # not any(c.isalpha() for c in cleaned) or
-        # len(set(cleaned)) / len(cleaned) < 0.4 or  # <30% unique = spam
-        # (sum(c.isdigit() for c in cleaned) > len(cleaned) * 0.3)  # >30% digits = nonsense
-    # )
     
     is_gibberish = (
         len(cleaned) < 3 or 
@@ -773,33 +710,11 @@ async def handle_message(message: Message):
             )
         
         # ISSUE 7 FIX: Update WARM summary
-#        if mode in [MODE.TEACH, MODE.CONTINUE] and canonical_topic and checkpoint:
         if mode in (MODE.TEACH, MODE.CONTINUE) and checkpoint:    
             await maybe_update_warm_summary(user_id, canonical_topic, checkpoint)
         
         final_response = answer + DISCLAIMER
         
-      # session_manager.add_message(user_id, user_message, answer)
-        # Issue 3 fix: Store checkpoint instead of full answer (saves 720 tokens per 3 turns)
-        # checkpoint_for_session = checkpoint if checkpoint else answer[:200]
-        # session_manager.add_message(user_id, user_message, checkpoint_for_session)
-        
-        # await database.deduct_tokens(user_id, tokens_used)
-        
-        # await database.log_usage(
-            # user_id,
-            # tokens_used,
-            # 'pro',
-            # intent,
-            # mode.value,
-            # canonical_topic or hot_state.get('current_topic')
-        # )
-        
-        # await database.increment_message_count(user_id)
-        
-        # await message.answer(final_response)
-        
-        # logger.info(f"User {user_id} response sent, tokens: {tokens_used}, mode: {mode.value}")
         
         checkpoint_for_session = checkpoint if checkpoint else answer[:200]
         session_manager.add_message(user_id, user_message, checkpoint_for_session)
