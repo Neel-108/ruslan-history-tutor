@@ -46,7 +46,7 @@ The Yandex API credits ran out and the bot is not running currently.
 
 What is in this repository:
 
-The original v1.6 prompt that started everything, the 3 reasoning documents written during the crisis period, the full architecture and flowchart, all eleven Python modules, the QA report covering 33 test scenarios and live smoke test outputs from real API calls.
+The original v1.6 prompt that started everything, the full architecture and flowchart, all eleven Python modules, the QA report covering 33 test scenarios and live smoke test outputs from real API calls.
 
 
 A note on the code:
