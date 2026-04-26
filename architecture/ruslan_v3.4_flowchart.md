@@ -135,15 +135,3 @@ Note: Best viewed in Raw or Code view on GtHub.
 │  Grade-appropriate                                                  │
 │  Continuation-safe                                                  │
 └─────────────────────────────────────────────────────────────────────┘
-
-
-
-This flowchart, together with the v3.4 architecture file, is sufficient for:
-
-implementation
-
-QA design
-
-cost reasoning
-
-explaining the system to another engineer.
