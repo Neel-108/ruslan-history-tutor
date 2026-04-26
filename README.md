@@ -1,4 +1,4 @@
-RUSLAN — AI History Tutor Bot for Russian Schools
+RUSLAN — AI History Tutor Bot for Russian Students
 
 RUSLAN is a Telegram bot that helps Russian school students (Grades 6-11) study history within their FGOS curriculum. I built this as part of teaching myself how AI systems actually work in production and not just in a notebook, but as a real deployed system.
 I am an electronics engineer. I have no formal CS or ML background. Everything here was figured out independently.
