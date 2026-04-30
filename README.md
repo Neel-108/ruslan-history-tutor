@@ -30,8 +30,7 @@ When I moved to YandexGPT API, everything broke. The bot lost track of where the
 
 The real problem was that I had built the entire system inside the prompt and I was asking the LLM to maintain state across turns, make routing decisions and enforce curriculum rules simultaneously. ChatGPT masked these problems but YandexGPT exposed them.
 
-I spent late January researching how people solve these problems in real systems using context management, state machines, tiered execution. I had not heard these terms before. The 3 documents in the reasoning folder capture that entire process as it was happening.
-
+I spent late January researching how people solve these problems in real systems using context management, state machines, tiered execution. I had not heard these terms before. 
 The redesign moved everything the LLM was failing at into the backend. Database owns state. Backend owns routing. Classifier handles intent. Pro model handles teaching only. That became RUSLAN v3.4.
 
 The design principles behind this architecture are part of a personal framework I call RITA which is my approach to building structured, reliable AI systems on top of LLM APIs.
